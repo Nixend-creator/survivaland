@@ -2,12 +2,14 @@ import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { useAuth } from "@/hooks/useAuth"
+import { useI18n } from "@/i18n"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { config } from "@/config"
 import { OAuthButtons } from "@/components/auth/OAuthButtons"
 
 export function LoginPage() {
+  const { t } = useI18n()
   const { login, isAuthenticated } = useAuth()
   const navigate = useNavigate()
   const [email, setEmail] = useState("")
@@ -22,16 +24,16 @@ export function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email || !password) {
-      toast.error("Заповніть усі поля")
+      toast.error(t("auth.fillAll"))
       return
     }
     setLoading(true)
     try {
       await login({ email, password })
-      toast.success("Вхід виконано")
+      toast.success(t("auth.loginSuccess"))
       navigate("/profile")
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Помилка входу")
+      toast.error(err instanceof Error ? err.message : t("auth.loginError"))
     } finally {
       setLoading(false)
     }
@@ -41,10 +43,8 @@ export function LoginPage() {
     <div className="mx-auto max-w-md px-4 py-16">
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Вхід</CardTitle>
-          <CardDescription>
-            Увійдіть у свій акаунт SurvivaLand
-          </CardDescription>
+          <CardTitle className="text-2xl">{t("auth.loginTitle")}</CardTitle>
+          <CardDescription>{t("auth.loginSubtitle")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -64,7 +64,7 @@ export function LoginPage() {
             </div>
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-[var(--color-text-muted)] mb-1.5">
-                Пароль
+                {t("auth.password")}
               </label>
               <input
                 id="password"
@@ -72,38 +72,41 @@ export function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
-                className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-elevated)] px-3 py-2.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-dim)] focus:border-[var(--color-primary)] focus:outline-none"
-                placeholder="••••••••"
+                className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-elevated)] px-3 py-2.5 text-sm text-[var(--color-text)] focus:border-[var(--color-primary)] focus:outline-none"
               />
+              <div className="mt-1.5 text-right">
+                <Link to="/forgot-password" className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-primary)]">
+                  {t("auth.forgotPassword")}
+                </Link>
+              </div>
             </div>
-            <div className="flex justify-end">
-              <Link
-                to="/forgot-password"
-                className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-primary)]"
-              >
-                Забули пароль?
-              </Link>
-            </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Вхід..." : "Увійти"}
+            <Button type="submit" className="w-full" size="lg" disabled={loading}>
+              {loading ? t("common.loading") : t("auth.loginBtn")}
             </Button>
           </form>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-[var(--color-border)]" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-[var(--color-surface)] px-2 text-[var(--color-text-dim)]">{t("auth.or")}</span>
+            </div>
+          </div>
 
           <OAuthButtons />
 
           <p className="mt-6 text-center text-sm text-[var(--color-text-muted)]">
-            Немає акаунта?{" "}
+            {t("auth.noAccount")}{" "}
             <Link to="/register" className="text-[var(--color-primary)] hover:underline">
-              Зареєструватися
+              {t("auth.registerLink")}
             </Link>
           </p>
 
           {config.demoMode && (
-            <div className="mt-6 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-elevated)]/50 p-3 text-xs text-[var(--color-text-dim)]">
-              <p className="font-medium text-[var(--color-text-muted)] mb-1">DEMO MODE</p>
-              <p>Будь-який email/пароль працює.</p>
-              <p>Email з «admin» → роль admin.</p>
-            </div>
+            <p className="mt-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-elevated)]/50 px-3 py-2 text-center text-[10px] text-[var(--color-text-dim)]">
+              {t("auth.demoHint")}
+            </p>
           )}
         </CardContent>
       </Card>

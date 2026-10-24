@@ -2,6 +2,7 @@ import { Coins, Store, Gavel, Briefcase, Gift, ArrowLeftRight } from "lucide-rea
 import { useI18n } from "@/i18n"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { CurrencyConverter } from "@/components/CurrencyConverter"
 
 const featureDefs = [
   { icon: Coins, titleKey: "economy.f_currency_t", descKey: "economy.f_currency_d" },
@@ -50,6 +51,10 @@ export function EconomyPage() {
             </CardHeader>
           </Card>
         ))}
+      </div>
+
+      <div className="mt-10">
+        <CurrencyConverter />
       </div>
 
       <Card className="mt-10">

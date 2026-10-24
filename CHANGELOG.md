@@ -5,6 +5,26 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/),
 версії — [Semantic Versioning](https://semver.org/lang/uk/).
 
+## [1.3.0] — 2026-10-24
+
+### Changed
+- Редизайн головної сторінки під premium-макет: cinematic hero, ONLINE-картка, bento-фічі, статистика, новини, Discord-банер, фінальний CTA
+
+## [1.2.0] — 2026-10-24
+
+### Added
+- Конвертер валют за курсом НБУ (дата + UAH/USD/EUR/PLN) на сторінці Economy
+- Markdown-редактор (toolbar + preview) для контенту новин в адмінці
+- Вибір валюти товару в адмін-магазині (UAH/USD/EUR/PLN)
+
+### Changed
+- Мінорний реліз після серії i18n/auth фіксів
+
+## [1.1.7] — 2026-10-24
+
+### Added
+- i18n для Login / Register (UA/RU/EN)
+
 ## [1.1.6] — 2026-10-24
 
 ### Fixed

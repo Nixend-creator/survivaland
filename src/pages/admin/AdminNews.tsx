@@ -6,6 +6,7 @@ import { toast } from "sonner"
 import { listNews, createNews, updateNews, deleteNews, type NewsInput } from "@/services/news"
 import type { NewsArticle } from "@/types"
 import { loc, pickLocalized, type LocalizedString } from "@/lib/localized"
+import { MarkdownEditor } from "@/components/editor/MarkdownEditor"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -191,8 +192,12 @@ export function AdminNews() {
               <textarea value={form.excerpt.ru} onChange={(e) => setForm((f) => ({ ...f, excerpt: { ...f.excerpt, ru: e.target.value } }))} className={cn(inputClass, "min-h-[48px] resize-y mb-2")} rows={2} placeholder="RU" />
               <textarea value={form.excerpt.en} onChange={(e) => setForm((f) => ({ ...f, excerpt: { ...f.excerpt, en: e.target.value } }))} className={cn(inputClass, "min-h-[48px] resize-y")} rows={2} placeholder="EN" />
             </Field>
-            <Field label="Контент UA *">
-              <textarea value={form.content.uk} onChange={(e) => setForm((f) => ({ ...f, content: { ...f.content, uk: e.target.value } }))} className={cn(inputClass, "min-h-[100px] resize-y font-mono text-xs")} rows={5} />
+            <Field label="Контент UA * (Markdown)">
+              <MarkdownEditor
+                value={form.content.uk}
+                onChange={(v) => setForm((f) => ({ ...f, content: { ...f.content, uk: v } }))}
+                minRows={8}
+              />
             </Field>
             <Field label="Контент RU">
               <textarea value={form.content.ru} onChange={(e) => setForm((f) => ({ ...f, content: { ...f.content, ru: e.target.value } }))} className={cn(inputClass, "min-h-[80px] resize-y font-mono text-xs")} rows={4} />

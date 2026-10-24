@@ -1,3 +1,4 @@
+import { useI18n } from "@/i18n"
 import { useState } from "react"
 import { toast } from "sonner"
 import { config } from "@/config"
@@ -9,6 +10,7 @@ import { Button } from "@/components/ui/button"
  * Enable providers in Supabase + VITE_OAUTH_DISCORD / VITE_OAUTH_GOOGLE.
  */
 export function OAuthButtons() {
+  const { t } = useI18n()
   const [loading, setLoading] = useState<OAuthProvider | null>(null)
 
   const handle = async (provider: OAuthProvider) => {
@@ -16,7 +18,7 @@ export function OAuthButtons() {
     try {
       await signInWithOAuthProvider(provider)
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "OAuth недоступний")
+      toast.error(err instanceof Error ? err.message : t("auth.oauthUnavailable"))
     } finally {
       setLoading(null)
     }
@@ -29,7 +31,7 @@ export function OAuthButtons() {
           <div className="w-full border-t border-[var(--color-border)]" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-[var(--color-surface)] px-2 text-[var(--color-text-dim)]">або</span>
+          <span className="bg-[var(--color-surface)] px-2 text-[var(--color-text-dim)]">{t("auth.or")}</span>
         </div>
       </div>
 
@@ -58,7 +60,7 @@ export function OAuthButtons() {
 
       {config.demoMode && (
         <p className="text-center text-[10px] text-[var(--color-text-dim)]">
-          OAuth працює лише з Supabase (не demo)
+          {t("auth.oauthNote")}
         </p>
       )}
     </div>
