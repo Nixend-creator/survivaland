@@ -1,0 +1,113 @@
+/**
+ * Site settings — demo: localStorage; prod: site_settings table.
+ */
+
+import { config } from "@/config"
+import { getSupabase, isSupabaseConfigured } from "@/lib/supabase"
+
+const STORAGE_KEY = "sl-site-settings"
+
+export type SiteSettings = {
+  serverIp: string
+  versionRange: string
+  currentVersion: string
+  discordInvite: string
+  slogan: string
+  maintenanceMode: boolean
+}
+
+export const defaultSiteSettings: SiteSettings = {
+  serverIp: config.serverIp,
+  versionRange: config.versionRange,
+  currentVersion: config.currentVersion,
+  discordInvite: config.discordInvite,
+  slogan: config.slogan,
+  maintenanceMode: false,
+}
+
+const KEY_MAP: Record<keyof SiteSettings, string> = {
+  serverIp: "server_ip",
+  versionRange: "version_range",
+  currentVersion: "current_version",
+  discordInvite: "discord_invite",
+  slogan: "slogan",
+  maintenanceMode: "maintenance_mode",
+}
+
+function useDemo() {
+  return config.demoMode || !isSupabaseConfigured()
+}
+
+function loadFromStorage(): Partial<SiteSettings> {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return {}
+    return JSON.parse(raw) as Partial<SiteSettings>
+  } catch {
+    return {}
+  }
+}
+
+function parseValue(key: keyof SiteSettings, raw: unknown): SiteSettings[typeof key] {
+  if (key === "maintenanceMode") {
+    return Boolean(raw === true || raw === "true") as SiteSettings["maintenanceMode"]
+  }
+  if (typeof raw === "string") return raw as SiteSettings[typeof key]
+  return String(raw ?? "") as SiteSettings[typeof key]
+}
+
+export async function getSiteSettings(): Promise<SiteSettings> {
+  if (useDemo()) {
+    await delay(100)
+    return { ...defaultSiteSettings, ...loadFromStorage() }
+  }
+  const supabase = getSupabase()!
+  const { data, error } = await supabase.from("site_settings").select("key, value")
+  if (error) throw new Error(error.message)
+  const next = { ...defaultSiteSettings }
+  for (const row of data ?? []) {
+    const entry = Object.entries(KEY_MAP).find(([, dbKey]) => dbKey === row.key)
+    if (!entry) continue
+    const [field] = entry as [keyof SiteSettings, string]
+    let val = row.value
+    // JSONB may already be parsed
+    if (typeof val === "string") {
+      try {
+        val = JSON.parse(val)
+      } catch {
+        /* keep string */
+      }
+    }
+    ;(next as Record<string, unknown>)[field] = parseValue(field, val)
+  }
+  return next
+}
+
+export async function updateSiteSettings(
+  patch: Partial<SiteSettings>
+): Promise<SiteSettings> {
+  if (useDemo()) {
+    await delay(250)
+    const next = { ...defaultSiteSettings, ...loadFromStorage(), ...patch }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+    return next
+  }
+  const supabase = getSupabase()!
+  const rows = Object.entries(patch).map(([field, value]) => {
+    const dbKey = KEY_MAP[field as keyof SiteSettings]
+    return {
+      key: dbKey,
+      value: value as unknown,
+      updated_at: new Date().toISOString(),
+    }
+  })
+  for (const row of rows) {
+    const { error } = await supabase.from("site_settings").upsert(row, { onConflict: "key" })
+    if (error) throw new Error(error.message)
+  }
+  return getSiteSettings()
+}
+
+function delay(ms: number) {
+  return new Promise((r) => setTimeout(r, ms))
+}
