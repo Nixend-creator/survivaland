@@ -160,7 +160,8 @@
     "cat_jobs": "Роботи",
     "cat_ranks": "Ранги",
     "cat_commands": "Команди",
-    "cat_faq": "FAQ"
+    "cat_faq": "FAQ",
+    "loadError": "Не вдалося завантажити Wiki"
   },
   "economy": {
     "title": "Економіка",

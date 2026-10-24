@@ -44,7 +44,7 @@ export function ShopPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl flex items-center gap-3">
           <ShoppingBag className="h-8 w-8 text-[var(--color-primary)]" />
-          Магазин
+          {t("shop.title")}
         </h1>
         <p className="mt-2 text-[var(--color-text-muted)]">
           {t("shop.subtitle")} · <Badge variant="warning">{t("shop.paymentComing")}</Badge>

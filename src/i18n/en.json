@@ -160,7 +160,8 @@
     "cat_jobs": "Jobs",
     "cat_ranks": "Ranks",
     "cat_commands": "Commands",
-    "cat_faq": "FAQ"
+    "cat_faq": "FAQ",
+    "loadError": "Failed to load Wiki"
   },
   "economy": {
     "title": "Economy",

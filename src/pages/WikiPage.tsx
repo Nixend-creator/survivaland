@@ -166,16 +166,16 @@ export function WikiPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl flex items-center gap-3">
           <BookOpen className="h-8 w-8 text-[var(--color-primary)]" />
-          Wiki
+          {t("wiki.title")}
         </h1>
-        <p className="mt-2 text-[var(--color-text-muted)]">{t("wiki.subtitle")}</p>
+        <p className="mt-2 text-[var(--color-text-muted)]">{{t("wiki.subtitle")}}</p>
       </div>
 
       <div className="mb-6 relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-text-dim)]" />
         <input
           type="search"
-          placeholder="{t("wiki.search")}"
+          placeholder={t("wiki.search")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] py-2.5 pl-10 pr-4 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-dim)] focus:border-[var(--color-primary)] focus:outline-none"
@@ -186,9 +186,9 @@ export function WikiPage() {
       {isError && (
         <Card>
           <CardContent className="flex flex-col items-center gap-3 py-10">
-            <p className="text-[var(--color-text-muted)]">Не вдалося завантажити Wiki</p>
+            <p className="text-[var(--color-text-muted)]">{{t("wiki.loadError")}}</p>
             <Button variant="secondary" size="sm" onClick={() => refetch()}>
-              Спробувати знову
+              {t("common.retry")}
             </Button>
           </CardContent>
         </Card>

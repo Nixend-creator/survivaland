@@ -160,7 +160,8 @@
     "cat_jobs": "Работы",
     "cat_ranks": "Ранги",
     "cat_commands": "Команды",
-    "cat_faq": "FAQ"
+    "cat_faq": "FAQ",
+    "loadError": "Не удалось загрузить Wiki"
   },
   "economy": {
     "title": "Экономика",
