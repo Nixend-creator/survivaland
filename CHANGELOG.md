@@ -5,6 +5,11 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/),
 версії — [Semantic Versioning](https://semver.org/lang/uk/).
 
+## [1.3.1] — 2026-10-24
+
+### Fixed
+- HomePage: `large` на всіх feature-картках (TS2339)
+
 ## [1.3.0] — 2026-10-24
 
 ### Changed

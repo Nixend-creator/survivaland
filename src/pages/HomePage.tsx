@@ -41,6 +41,7 @@ const featureCards = [
     icon: Swords,
     titleKey: "home.card_pvp_t",
     descKey: "home.card_pvp_d",
+    large: false,
     gradient: "from-slate-800/90 to-slate-900/90",
   },
   {
@@ -48,6 +49,7 @@ const featureCards = [
     icon: Coins,
     titleKey: "home.card_economy_t",
     descKey: "home.card_economy_d",
+    large: false,
     gradient: "from-amber-900/40 to-slate-900/90",
   },
   {
@@ -55,6 +57,7 @@ const featureCards = [
     icon: Map,
     titleKey: "home.card_quests_t",
     descKey: "home.card_quests_d",
+    large: false,
     gradient: "from-slate-800/90 to-slate-900/90",
   },
   {
@@ -62,6 +65,7 @@ const featureCards = [
     icon: Hammer,
     titleKey: "home.card_build_t",
     descKey: "home.card_build_d",
+    large: false,
     gradient: "from-slate-800/90 to-slate-900/90",
   },
   {
@@ -69,6 +73,7 @@ const featureCards = [
     icon: Calendar,
     titleKey: "home.card_events_t",
     descKey: "home.card_events_d",
+    large: false,
     gradient: "from-slate-800/90 to-slate-900/90",
   },
 ] as const
@@ -211,7 +216,7 @@ export function HomePage() {
               className={cn(
                 "group relative overflow-hidden rounded-2xl border border-[var(--color-border)] bg-gradient-to-br p-5 transition hover:border-[var(--color-primary)]/40",
                 f.gradient,
-                f.large && "sm:row-span-2 min-h-[280px] flex flex-col justify-end"
+                f.large === true && "sm:row-span-2 min-h-[280px] flex flex-col justify-end"
               )}
             >
               <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--color-primary)]/15 text-[var(--color-primary)]">
