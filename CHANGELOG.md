@@ -5,6 +5,11 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/),
 версії — [Semantic Versioning](https://semver.org/lang/uk/).
 
+## [1.1.5] — 2026-10-24
+
+### Fixed
+- WikiPage: подвійні дужки `{{t(...)}}` → `{t(...)}` (TS1003)
+
 ## [1.1.4] — 2026-10-24
 
 ### Fixed

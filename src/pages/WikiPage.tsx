@@ -168,7 +168,7 @@ export function WikiPage() {
           <BookOpen className="h-8 w-8 text-[var(--color-primary)]" />
           {t("wiki.title")}
         </h1>
-        <p className="mt-2 text-[var(--color-text-muted)]">{{t("wiki.subtitle")}}</p>
+        <p className="mt-2 text-[var(--color-text-muted)]">{t("wiki.subtitle")}</p>
       </div>
 
       <div className="mb-6 relative max-w-md">
@@ -186,7 +186,7 @@ export function WikiPage() {
       {isError && (
         <Card>
           <CardContent className="flex flex-col items-center gap-3 py-10">
-            <p className="text-[var(--color-text-muted)]">{{t("wiki.loadError")}}</p>
+            <p className="text-[var(--color-text-muted)]">{t("wiki.loadError")}</p>
             <Button variant="secondary" size="sm" onClick={() => refetch()}>
               {t("common.retry")}
             </Button>
