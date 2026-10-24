@@ -5,6 +5,12 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/),
 версії — [Semantic Versioning](https://semver.org/lang/uk/).
 
+## [1.1.6] — 2026-10-24
+
+### Fixed
+- HomePage: why-cards titleKey/textKey
+- WikiPage: categories `labelKey` замість `label`
+
 ## [1.1.5] — 2026-10-24
 
 ### Fixed

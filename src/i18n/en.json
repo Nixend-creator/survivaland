@@ -24,7 +24,7 @@
   },
   "home": {
     "whyTitle": "Why SurvivaLand?",
-    "whyText": "Premium survival with economy, PvP, and an active community.",
+    "whyText": "Premium survival server focused on survival, building, economy, and community.",
     "featuresTitle": "Features",
     "rankingsTitle": "Rankings",
     "rankingsAll": "All rankings",
@@ -51,7 +51,8 @@
     "why3_t": "Community",
     "why3_d": "Active players and moderation",
     "why4_t": "Updates",
-    "why4_d": "Constant development and content"
+    "why4_d": "Constant development and content",
+    "featuresSub": "Everything you need for a rich experience"
   },
   "common": {
     "loading": "Loading...",

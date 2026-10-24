@@ -101,17 +101,17 @@ export function HomePage() {
             <div>
               <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">{t("home.whyTitle")}</h2>
               <p className="mt-2 text-[var(--color-text-muted)]">
-                Преміум survival-сервер з фокусом на виживання, будівництво, економіку та спільноту.
+                {t("home.whyText")}
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               {[
-                { title: "Стабільність", text: "Оптимізований сервер, мінімум лагів" },
-                { title: "Справедливість", text: "Античит, балансована економіка" },
-                { title: "Спільнота", text: "Активні гравці та модерація" },
-                { title: "Оновлення", text: "Постійний розвиток і контент" },
+                { titleKey: "home.why1_t", textKey: "home.why1_d" },
+                { titleKey: "home.why2_t", textKey: "home.why2_d" },
+                { titleKey: "home.why3_t", textKey: "home.why3_d" },
+                { titleKey: "home.why4_t", textKey: "home.why4_d" },
               ].map((item) => (
-                <div key={t(item.titleKey)} className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+                <div key={item.titleKey} className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
                   <h3 className="font-semibold text-[var(--color-primary)]">{t(item.titleKey)}</h3>
                   <p className="mt-1 text-sm text-[var(--color-text-muted)]">{t(item.textKey)}</p>
                 </div>
@@ -126,7 +126,7 @@ export function HomePage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">{t("home.featuresTitle")}</h2>
           <p className="mx-auto mt-2 max-w-2xl text-center text-[var(--color-text-muted)]">
-            Все, що потрібно для насиченої гри
+            {t("home.featuresSub")}
           </p>
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {featureDefs.map((f) => (
