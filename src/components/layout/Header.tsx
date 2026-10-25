@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { useQuery } from "@tanstack/react-query"
 import { getSiteSettings } from "@/services/siteSettings"
 import type { Language } from "@/types"
+import { config } from "@/config"
 
 const navItems = [
   { key: "home", path: "/" },
@@ -32,7 +33,7 @@ export function Header() {
   const { data: site } = useQuery({ queryKey: ["site-settings"], queryFn: getSiteSettings })
   const brandName = site?.siteName || "SurvivaLand"
   const logoUrl = site?.logoUrl || ""
-  const discordInvite = site?.discordInvite ?? ""
+  const discordInvite = (site?.discordInvite || config.discordInvite || "").trim()
   const location = useLocation()
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -99,6 +100,12 @@ export function Header() {
 
         {/* Right side */}
         <div className="flex items-center gap-2">
+          {config.demoMode && (
+            <span className="hidden md:inline-flex rounded-md border border-[var(--color-accent-gold)]/40 bg-[var(--color-accent-gold)]/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--color-accent-gold)]">
+              Preview
+            </span>
+          )}
+
           {/* Language */}
           <div className="relative">
             <Button
@@ -139,23 +146,13 @@ export function Header() {
 
           {/* Discord */}
           {discordInvite ? (
-            <a
-              href={discordInvite}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden sm:inline-flex"
-            >
-              <Button variant="secondary" size="sm" className="gap-1.5">
+            <a href={discordInvite} target="_blank" rel="noopener noreferrer" className="hidden sm:inline-flex">
+              <Button variant="outline" size="sm" className="gap-1.5 border-[#5865F2]/40 text-[#5865F2] hover:bg-[#5865F2]/10">
                 <MessageCircle className="h-4 w-4" />
                 Discord
               </Button>
             </a>
-          ) : (
-            <Button variant="secondary" size="sm" className="gap-1.5 hidden sm:inline-flex" disabled title="Configure VITE_DISCORD_INVITE_URL">
-              <MessageCircle className="h-4 w-4" />
-              Discord
-            </Button>
-          )}
+          ) : null}
 
           {/* Auth */}
           {isAuthenticated && user ? (
@@ -203,6 +200,14 @@ export function Header() {
               </Link>
             ))}
             <div className="mt-3 flex flex-col gap-2 border-t border-[var(--color-border)] pt-3">
+              {discordInvite ? (
+                <a href={discordInvite} target="_blank" rel="noopener noreferrer">
+                  <Button variant="outline" className="w-full gap-1.5 border-[#5865F2]/40 text-[#5865F2]">
+                    <MessageCircle className="h-4 w-4" />
+                    Discord
+                  </Button>
+                </a>
+              ) : null}
               {isAuthenticated && user ? (
                 <Link to="/profile">
                   <Button variant="secondary" className="w-full gap-1.5">

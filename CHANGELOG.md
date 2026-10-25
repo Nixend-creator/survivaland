@@ -5,6 +5,14 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/),
 версії — [Semantic Versioning](https://semver.org/lang/uk/).
 
+## [1.4.1] — 2026-10-25
+
+### Added
+- Header: Discord з settings/env, бейдж Preview у demo, Discord у mobile menu
+
+### Changed
+- Track A кроки 2–3: домен pp.ua + header під макет
+
 ## [1.4.0] — 2026-10-25
 
 ### Added
