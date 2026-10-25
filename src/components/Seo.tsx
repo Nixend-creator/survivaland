@@ -1,6 +1,8 @@
+import { useQuery } from "@tanstack/react-query"
 import { useEffect } from "react"
 import { useLocation } from "react-router-dom"
 import { config } from "@/config"
+import { getSiteSettings } from "@/services/siteSettings"
 
 type SeoProps = {
   title?: string
@@ -8,51 +10,18 @@ type SeoProps = {
   noIndex?: boolean
 }
 
-const DEFAULT_DESCRIPTION =
-  "SurvivaLand — Minecraft сервер із виживанням, PvP, економікою, будівництвом та активною спільнотою."
-
 const ROUTE_SEO: Record<string, { title: string; description?: string }> = {
-  "/": {
-    title: "SurvivaLand — Minecraft сервер | Survival • PvP • Economy",
-    description: DEFAULT_DESCRIPTION,
-  },
-  "/server": {
-    title: "Про сервер — SurvivaLand",
-    description: "Версії, IP, правила світу та особливості SurvivaLand.",
-  },
-  "/rankings": {
-    title: "Рейтинги гравців — SurvivaLand",
-    description: "Топ гравців за часом гри, багатством, PvP та досягненнями.",
-  },
-  "/wiki": {
-    title: "Wiki — SurvivaLand",
-    description: "Гайди, команди та довідка по серверу SurvivaLand.",
-  },
-  "/rules": {
-    title: "Правила — SurvivaLand",
-    description: "Правила поведінки та гри на сервері SurvivaLand.",
-  },
-  "/news": {
-    title: "Новини — SurvivaLand",
-    description: "Оновлення, івенти та анонси SurvivaLand.",
-  },
-  "/shop": {
-    title: "Магазин — SurvivaLand",
-    description: "Ранги, набори та підтримка сервера SurvivaLand.",
-  },
-  "/economy": {
-    title: "Економіка — SurvivaLand",
-    description: "Як працює валюта, торгівля та магазини на SurvivaLand.",
-  },
-  "/login": {
-    title: "Вхід — SurvivaLand",
-  },
-  "/register": {
-    title: "Реєстрація — SurvivaLand",
-  },
-  "/profile": {
-    title: "Профіль — SurvivaLand",
-  },
+  "/server": { title: "Server — SurvivaLand" },
+  "/rankings": { title: "Rankings — SurvivaLand" },
+  "/wiki": { title: "Wiki — SurvivaLand" },
+  "/rules": { title: "Rules — SurvivaLand" },
+  "/news": { title: "News — SurvivaLand" },
+  "/shop": { title: "Shop — SurvivaLand" },
+  "/economy": { title: "Economy — SurvivaLand" },
+  "/login": { title: "Sign in — SurvivaLand" },
+  "/register": { title: "Register — SurvivaLand" },
+  "/profile": { title: "Profile — SurvivaLand" },
+  "/report": { title: "Report — SurvivaLand" },
 }
 
 function setMeta(name: string, content: string, property = false) {
@@ -66,23 +35,29 @@ function setMeta(name: string, content: string, property = false) {
   el.setAttribute("content", content)
 }
 
-/**
- * Updates document title + meta description/og per route.
- * Place once inside the router.
- */
+/** Updates document title + meta description/og per route. */
 export function Seo({ title, description, noIndex }: SeoProps = {}) {
   const { pathname } = useLocation()
+  const { data: site } = useQuery({ queryKey: ["site-settings"], queryFn: getSiteSettings })
 
   useEffect(() => {
     const routeKey =
-      Object.keys(ROUTE_SEO)
-        .filter((k) => k !== "/")
-        .find((k) => pathname === k || pathname.startsWith(k + "/")) ||
-      (pathname === "/" ? "/" : "")
-
+      Object.keys(ROUTE_SEO).find((k) => pathname === k || pathname.startsWith(k + "/")) || ""
     const route = routeKey ? ROUTE_SEO[routeKey] : undefined
-    const pageTitle = title || route?.title || `${config.appName} — Minecraft сервер`
-    const pageDesc = description || route?.description || DEFAULT_DESCRIPTION
+
+    const brand = site?.siteName || config.appName
+    const pageTitle =
+      title ||
+      route?.title ||
+      (pathname === "/"
+        ? site?.siteTitle || `${brand} — Minecraft Server`
+        : `${brand}`)
+    const pageDesc =
+      description ||
+      route?.description ||
+      site?.siteDescription ||
+      "Minecraft survival server"
+
     const shouldNoIndex =
       noIndex ||
       pathname.startsWith("/admin") ||
@@ -100,16 +75,17 @@ export function Seo({ title, description, noIndex }: SeoProps = {}) {
     setMeta("twitter:description", pageDesc)
     setMeta("robots", shouldNoIndex ? "noindex, nofollow" : "index, follow")
 
-    // canonical
     let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
     if (!link) {
       link = document.createElement("link")
       link.rel = "canonical"
       document.head.appendChild(link)
     }
-    const origin = window.location.origin
+    // Prefer configured public domain for canonical when available
+    const host = site?.siteDomain?.trim()
+    const origin = host ? `https://${host.replace(/^https?:\/\//, "")}` : window.location.origin
     link.href = `${origin}${pathname === "/" ? "/" : pathname}`
-  }, [pathname, title, description, noIndex])
+  }, [pathname, title, description, noIndex, site])
 
   return null
 }

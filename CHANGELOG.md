@@ -5,6 +5,17 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/),
 версії — [Semantic Versioning](https://semver.org/lang/uk/).
 
+## [1.4.0] — 2026-10-25
+
+### Added
+- Track A: брендинг у Settings (домен, назва, SEO title/description, logo URL)
+- Header підхоплює назву/лого з налаштувань
+- Seo canonical з `siteDomain` (survivaland.pp.ua)
+- `docs/TRACK_A.md` — чеклист preview-релізу
+
+### Changed
+- Дефолтний IP/домен: `survivaland.pp.ua`
+
 ## [1.3.1] — 2026-10-24
 
 ### Fixed

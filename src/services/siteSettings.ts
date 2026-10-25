@@ -1,5 +1,6 @@
 /**
  * Site settings — demo: localStorage; prod: site_settings table.
+ * Branding: domain, logo, titles — editable from Admin → Settings.
  */
 
 import { config } from "@/config"
@@ -8,6 +9,13 @@ import { getSupabase, isSupabaseConfigured } from "@/lib/supabase"
 const STORAGE_KEY = "sl-site-settings"
 
 export type SiteSettings = {
+  /** Public site hostname, e.g. survivaland.pp.ua */
+  siteDomain: string
+  siteName: string
+  siteTitle: string
+  siteDescription: string
+  /** Image URL or path for header logo */
+  logoUrl: string
   serverIp: string
   versionRange: string
   currentVersion: string
@@ -17,7 +25,13 @@ export type SiteSettings = {
 }
 
 export const defaultSiteSettings: SiteSettings = {
-  serverIp: config.serverIp,
+  siteDomain: "survivaland.pp.ua",
+  siteName: "SurvivaLand",
+  siteTitle: "SurvivaLand — Minecraft Server",
+  siteDescription:
+    "Premium Minecraft survival server: building, economy, PvP and community.",
+  logoUrl: "",
+  serverIp: "survivaland.pp.ua",
   versionRange: config.versionRange,
   currentVersion: config.currentVersion,
   discordInvite: config.discordInvite,
@@ -26,6 +40,11 @@ export const defaultSiteSettings: SiteSettings = {
 }
 
 const KEY_MAP: Record<keyof SiteSettings, string> = {
+  siteDomain: "site_domain",
+  siteName: "site_name",
+  siteTitle: "site_title",
+  siteDescription: "site_description",
+  logoUrl: "logo_url",
   serverIp: "server_ip",
   versionRange: "version_range",
   currentVersion: "current_version",
@@ -70,7 +89,6 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     if (!entry) continue
     const [field] = entry as [keyof SiteSettings, string]
     let val = row.value
-    // JSONB may already be parsed
     if (typeof val === "string") {
       try {
         val = JSON.parse(val)
@@ -87,20 +105,18 @@ export async function updateSiteSettings(
   patch: Partial<SiteSettings>
 ): Promise<SiteSettings> {
   if (useDemo()) {
-    await delay(250)
-    const next = { ...defaultSiteSettings, ...loadFromStorage(), ...patch }
+    await delay(200)
+    const current = { ...defaultSiteSettings, ...loadFromStorage() }
+    const next = { ...current, ...patch }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
     return next
   }
   const supabase = getSupabase()!
-  const rows = Object.entries(patch).map(([field, value]) => {
-    const dbKey = KEY_MAP[field as keyof SiteSettings]
-    return {
-      key: dbKey,
-      value: value as unknown,
-      updated_at: new Date().toISOString(),
-    }
-  })
+  const rows = Object.entries(patch).map(([field, value]) => ({
+    key: KEY_MAP[field as keyof SiteSettings],
+    value: value as string | boolean,
+    updated_at: new Date().toISOString(),
+  }))
   for (const row of rows) {
     const { error } = await supabase.from("site_settings").upsert(row, { onConflict: "key" })
     if (error) throw new Error(error.message)

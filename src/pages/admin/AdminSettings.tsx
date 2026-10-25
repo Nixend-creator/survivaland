@@ -9,6 +9,10 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { config } from "@/config"
+
+const inputClass =
+  "w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-elevated)] px-3 py-2 text-sm text-[var(--color-text)] focus:border-[var(--color-primary)] focus:outline-none"
 
 export function AdminSettings() {
   const queryClient = useQueryClient()
@@ -16,7 +20,6 @@ export function AdminSettings() {
     queryKey: ["site-settings"],
     queryFn: getSiteSettings,
   })
-
   const [form, setForm] = useState<SiteSettings | null>(null)
   const [saving, setSaving] = useState(false)
 
@@ -26,17 +29,10 @@ export function AdminSettings() {
 
   const handleSave = async () => {
     if (!form) return
-    if (!form.serverIp.trim()) {
-      toast.error("IP сервера обов'язковий")
-      return
-    }
     setSaving(true)
     try {
-      const saved = await updateSiteSettings(form)
-      setForm(saved)
+      await updateSiteSettings(form)
       await queryClient.invalidateQueries({ queryKey: ["site-settings"] })
-      // also refresh server status which may show IP
-      await queryClient.invalidateQueries({ queryKey: ["serverStatus"] })
       toast.success("Налаштування збережено")
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Помилка збереження")
@@ -70,13 +66,21 @@ export function AdminSettings() {
     )
   }
 
+  const set = <K extends keyof SiteSettings>(key: K, value: SiteSettings[K]) =>
+    setForm((f) => (f ? { ...f, [key]: value } : f))
+
   return (
     <div>
       <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold">Налаштування</h1>
           <p className="text-sm text-[var(--color-text-muted)]">
-            Параметри сайту · <Badge variant="warning">DEMO · localStorage</Badge>
+            Брендинг і сервер ·{" "}
+            {config.demoMode ? (
+              <Badge variant="warning">DEMO · localStorage</Badge>
+            ) : (
+              <Badge variant="success">Supabase</Badge>
+            )}
           </p>
         </div>
         <Button onClick={handleSave} disabled={saving}>
@@ -84,37 +88,71 @@ export function AdminSettings() {
         </Button>
       </div>
 
-      <div className="grid gap-6 max-w-2xl">
+      <div className="grid max-w-2xl gap-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Сервер</CardTitle>
-            <CardDescription>Адреса та версії Minecraft</CardDescription>
+            <CardTitle className="text-base">Брендинг сайту</CardTitle>
+            <CardDescription>
+              Домен, назва, SEO-заголовок, логотип. DNS для домену налаштовується в Vercel.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Field label="IP / домен">
+            <Field label="Публічний домен (hostname)">
               <input
-                value={form.serverIp}
-                onChange={(e) => setForm((f) => f && { ...f, serverIp: e.target.value })}
+                value={form.siteDomain}
+                onChange={(e) => set("siteDomain", e.target.value)}
                 className={inputClass}
-                placeholder="survivaland.top"
+                placeholder="survivaland.pp.ua"
+              />
+              <p className="mt-1 text-[10px] text-[var(--color-text-dim)]">
+                Лише відображення / SEO. Прив’язка DNS: Vercel → Domains → survivaland.pp.ua
+              </p>
+            </Field>
+            <Field label="Назва бренду (header)">
+              <input
+                value={form.siteName}
+                onChange={(e) => set("siteName", e.target.value)}
+                className={inputClass}
+                placeholder="SurvivaLand"
               />
             </Field>
-            <Field label="Діапазон версій">
+            <Field label="SEO title (вкладка браузера)">
               <input
-                value={form.versionRange}
-                onChange={(e) => setForm((f) => f && { ...f, versionRange: e.target.value })}
+                value={form.siteTitle}
+                onChange={(e) => set("siteTitle", e.target.value)}
                 className={inputClass}
-                placeholder="1.17.1–1.21.11"
+                placeholder="SurvivaLand — Minecraft Server"
               />
             </Field>
-            <Field label="Поточна версія">
+            <Field label="SEO description">
+              <textarea
+                value={form.siteDescription}
+                onChange={(e) => set("siteDescription", e.target.value)}
+                className={inputClass + " min-h-[72px] resize-y"}
+                rows={3}
+              />
+            </Field>
+            <Field label="URL логотипу">
               <input
-                value={form.currentVersion}
-                onChange={(e) =>
-                  setForm((f) => f && { ...f, currentVersion: e.target.value })
-                }
+                value={form.logoUrl}
+                onChange={(e) => set("logoUrl", e.target.value)}
                 className={inputClass}
-                placeholder="1.21.11"
+                placeholder="https://.../logo.png"
+              />
+              {form.logoUrl ? (
+                <img
+                  src={form.logoUrl}
+                  alt="Logo preview"
+                  className="mt-2 h-10 w-auto rounded border border-[var(--color-border)] bg-[var(--color-surface)] object-contain p-1"
+                />
+              ) : null}
+            </Field>
+            <Field label="Слоган">
+              <input
+                value={form.slogan}
+                onChange={(e) => set("slogan", e.target.value)}
+                className={inputClass}
+                placeholder="Survival • Building • Community"
               />
             </Field>
           </CardContent>
@@ -122,24 +160,38 @@ export function AdminSettings() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Бренд і спільнота</CardTitle>
-            <CardDescription>Слоган і Discord</CardDescription>
+            <CardTitle className="text-base">Minecraft-сервер</CardTitle>
+            <CardDescription>Адреса підключення та версії</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Field label="Слоган">
+            <Field label="IP / хост для гри">
               <input
-                value={form.slogan}
-                onChange={(e) => setForm((f) => f && { ...f, slogan: e.target.value })}
+                value={form.serverIp}
+                onChange={(e) => set("serverIp", e.target.value)}
                 className={inputClass}
-                placeholder="Survival • Building • Community"
+                placeholder="survivaland.pp.ua"
+              />
+            </Field>
+            <Field label="Діапазон версій">
+              <input
+                value={form.versionRange}
+                onChange={(e) => set("versionRange", e.target.value)}
+                className={inputClass}
+                placeholder="1.17.1–1.21.11"
+              />
+            </Field>
+            <Field label="Поточна версія">
+              <input
+                value={form.currentVersion}
+                onChange={(e) => set("currentVersion", e.target.value)}
+                className={inputClass}
+                placeholder="1.21.11"
               />
             </Field>
             <Field label="Discord invite URL">
               <input
                 value={form.discordInvite}
-                onChange={(e) =>
-                  setForm((f) => f && { ...f, discordInvite: e.target.value })
-                }
+                onChange={(e) => set("discordInvite", e.target.value)}
                 className={inputClass}
                 placeholder="https://discord.gg/..."
               />
@@ -149,25 +201,17 @@ export function AdminSettings() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Режим</CardTitle>
-            <CardDescription>Технічні перемикачі</CardDescription>
+            <CardTitle className="text-base">Режим робіт</CardTitle>
           </CardHeader>
           <CardContent>
-            <label className="flex items-center gap-3 text-sm cursor-pointer">
+            <label className="flex items-center gap-3 text-sm">
               <input
                 type="checkbox"
                 checked={form.maintenanceMode}
-                onChange={(e) =>
-                  setForm((f) => f && { ...f, maintenanceMode: e.target.checked })
-                }
+                onChange={(e) => set("maintenanceMode", e.target.checked)}
                 className="h-4 w-4 rounded border-[var(--color-border)]"
               />
-              <span>
-                Режим техробіт
-                <span className="block text-xs text-[var(--color-text-dim)]">
-                  Відвідувачі бачать заглушку; admin може увійти та вимкнути режим
-                </span>
-              </span>
+              Увімкнути сторінку «Технічні роботи» для відвідувачів
             </label>
           </CardContent>
         </Card>
@@ -175,9 +219,6 @@ export function AdminSettings() {
     </div>
   )
 }
-
-const inputClass =
-  "w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-elevated)] px-3 py-2 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-dim)] focus:border-[var(--color-primary)] focus:outline-none"
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
