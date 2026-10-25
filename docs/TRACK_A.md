@@ -10,9 +10,9 @@
 - [ ] Env: `VITE_DEMO_MODE=true` (preview) або `false` після Supabase
 - [ ] Env: `VITE_DISCORD_INVITE_URL`
 - [ ] Admin → Settings: домен, назва, SEO, лого, IP
-- [ ] Header показує лого/назву з налаштувань
+- [x] Header показує лого/назву з налаштувань
 - [ ] Бейдж Preview/Demo якщо demo mode
-- [ ] CI: `npm run build` (опційно)
+- [x] CI: `npm run build` (GitHub Actions)
 
 ## DNS (pp.ua)
 

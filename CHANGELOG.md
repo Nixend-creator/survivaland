@@ -5,6 +5,17 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/),
 версії — [Semantic Versioning](https://semver.org/lang/uk/).
 
+## [1.4.3] — 2026-10-25
+
+### Added
+- `docs/TRACK_A_ACCEPTANCE.md` — чеклист приймання Stable Preview + git tag
+
+## [1.4.2] — 2026-10-25
+
+### Added
+- Footer: лого/назва/домен з Settings, структура як на макеті
+- GitHub Actions: `npm run build` на push/PR у main
+
 ## [1.4.1] — 2026-10-25
 
 ### Added
