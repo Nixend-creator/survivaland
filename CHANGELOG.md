@@ -5,6 +5,12 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/),
 версії — [Semantic Versioning](https://semver.org/lang/uk/).
 
+## [1.5.1] — 2026-10-27
+
+### Added
+- Live Minecraft status via mcsrvstat.us (`142.132.134.223:25620`)
+- Parser for mcsrvstat v3 JSON; full URL without forced `/api/server/status`
+
 ## [1.4.3] — 2026-10-25
 
 ### Added

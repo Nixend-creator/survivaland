@@ -1,3 +1,10 @@
+/**
+ * Minecraft server status.
+ * Supports:
+ * - Full URL to JSON (e.g. mcsrvstat.us / own API)
+ * - Demo simulation when VITE_DEMO_MODE or no URL
+ */
+
 import { config } from "@/config"
 import { getSiteSettings } from "@/services/siteSettings"
 import type { ServerStatus } from "@/types"
@@ -11,13 +18,14 @@ const DEMO_STATUS: ServerStatus = {
   lastUpdated: new Date(),
 }
 
-/**
- * Minecraft server status service.
- * Replace DEMO_STATUS with real API call when VITE_MINECRAFT_API_URL is configured.
- */
+/** Default public query for this project (override with VITE_MINECRAFT_API_URL) */
+export const DEFAULT_MC_STATUS_URL =
+  "https://api.mcsrvstat.us/3/142.132.134.223:25620"
+
 export async function getServerStatus(): Promise<ServerStatus> {
-  if (config.demoMode || !config.minecraftApiUrl) {
-    // Simulate network delay
+  const apiUrl = (config.minecraftApiUrl || "").trim() || DEFAULT_MC_STATUS_URL
+
+  if (config.demoMode && !config.minecraftApiUrl) {
     await new Promise((r) => setTimeout(r, 400 + Math.random() * 300))
     const settings = await getSiteSettings()
     return {
@@ -34,30 +42,61 @@ export async function getServerStatus(): Promise<ServerStatus> {
   }
 
   const controller = new AbortController()
-  const timeout = setTimeout(() => controller.abort(), 8000)
+  const timeout = setTimeout(() => controller.abort(), 10000)
 
   try {
-    const res = await fetch(`${config.minecraftApiUrl}/api/server/status`, {
+    // Use URL as-is (mcsrvstat is a full path; do not append /api/server/status)
+    const res = await fetch(apiUrl, {
       signal: controller.signal,
       headers: { Accept: "application/json" },
     })
     if (!res.ok) throw new Error(`Status ${res.status}`)
-    const data = await res.json()
-    return {
-      online: data.online ?? false,
-      players: {
-        online: data.players?.online ?? 0,
-        max: data.players?.max ?? 0,
-      },
-      version: data.version ?? config.currentVersion,
-      ip: data.ip ?? config.serverIp,
-      latency: data.latency ?? null,
-      lastUpdated: new Date(),
-    }
+    const data = (await res.json()) as Record<string, unknown>
+    return mapStatusPayload(data)
   } catch (err) {
     console.error("[minecraftServer] Failed to fetch status:", err)
     throw err
   } finally {
     clearTimeout(timeout)
+  }
+}
+
+function mapStatusPayload(data: Record<string, unknown>): ServerStatus {
+  const settingsIp = config.serverIp
+  const online = Boolean(data.online)
+
+  // mcsrvstat: players: { online, max }, version: string | { name }
+  const playersRaw = data.players as { online?: number; max?: number } | undefined
+  let version = config.currentVersion
+  if (typeof data.version === "string") version = data.version
+  else if (data.version && typeof data.version === "object") {
+    const v = data.version as { name?: string }
+    if (v.name) version = v.name
+  }
+  // protocol.name sometimes more accurate on newer APIs
+  if (data.protocol && typeof data.protocol === "object") {
+    const p = data.protocol as { name?: string }
+    if (p.name) version = p.name
+  }
+
+  const ip =
+    typeof data.hostname === "string" && data.hostname
+      ? data.hostname
+      : typeof data.ip === "string"
+        ? data.port
+          ? `${data.ip}:${data.port}`
+          : data.ip
+        : settingsIp
+
+  return {
+    online,
+    players: {
+      online: Number(playersRaw?.online ?? 0),
+      max: Number(playersRaw?.max ?? 0),
+    },
+    version,
+    ip: String(ip),
+    latency: typeof data.latency === "number" ? data.latency : null,
+    lastUpdated: new Date(),
   }
 }
