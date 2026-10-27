@@ -87,7 +87,7 @@ export function HomePage() {
     queryFn: getServerStatus,
     refetchInterval: 30000,
   })
-  const serverIp = site?.serverIp ?? "survivaland.top"
+  const serverIp = site?.serverIp ?? "142.132.134.223:25620"
   const discordInvite = site?.discordInvite ?? ""
 
   const handleCopy = async () => {

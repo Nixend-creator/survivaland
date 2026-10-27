@@ -5,6 +5,11 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/),
 версії — [Semantic Versioning](https://semver.org/lang/uk/).
 
+## [1.5.3] — 2026-10-27
+
+### Changed
+- Дефолтний IP гри: `142.132.134.223:25620` (замість survivaland.top / pp.ua у copy/status)
+
 ## [1.5.2] — 2026-10-27
 
 ### Fixed

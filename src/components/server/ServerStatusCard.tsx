@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { cn, copyToClipboard } from "@/lib/utils"
 import { config } from "@/config"
+import { getSiteSettings } from "@/services/siteSettings"
 import { toast } from "sonner"
 import { useI18n } from "@/i18n"
 
@@ -30,6 +31,8 @@ function ServerStatusSkeleton() {
 
 export function ServerStatusCard({ className }: { className?: string }) {
   const { t } = useI18n()
+  const { data: site } = useQuery({ queryKey: ["site-settings"], queryFn: getSiteSettings })
+  const displayIp = site?.serverIp || config.serverIp
   const { data, isLoading, isError, refetch, isFetching } = useQuery({
     queryKey: ["serverStatus"],
     queryFn: getServerStatus,
@@ -38,7 +41,7 @@ export function ServerStatusCard({ className }: { className?: string }) {
   })
 
   const handleCopy = async () => {
-    const ok = await copyToClipboard(config.serverIp)
+    const ok = await copyToClipboard(displayIp)
     if (ok) toast.success(t("status.copyIp"))
     else toast.error(t("status.copyFail"))
   }
@@ -113,7 +116,7 @@ export function ServerStatusCard({ className }: { className?: string }) {
         </div>
 
         <div className="flex items-center justify-between gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-elevated)]/30 px-3 py-2.5">
-          <code className="font-mono text-sm text-[var(--color-primary)]">{data.ip}</code>
+          <code className="font-mono text-sm text-[var(--color-primary)]">{data.ip || displayIp}</code>
           <Button variant="ghost" size="sm" onClick={handleCopy} className="h-8 shrink-0">
             <Copy className="h-3.5 w-3.5" />
             {t("status.copy")}

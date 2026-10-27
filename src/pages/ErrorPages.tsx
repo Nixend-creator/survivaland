@@ -41,7 +41,7 @@ export function MaintenancePage() {
       <p className="mt-3 max-w-md text-[var(--color-text-muted)] leading-relaxed">
         {t("errors.maintenanceText")}
       </p>
-      <p className="mt-8 font-mono text-sm text-[var(--color-primary)]">survivaland.top</p>
+      <p className="mt-8 font-mono text-sm text-[var(--color-primary)]">142.132.134.223:25620</p>
     </div>
   )
 }

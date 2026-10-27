@@ -23,7 +23,7 @@ const featureDefs = [
 export function ServerPage() {
   const { t } = useI18n()
   const { data: site } = useQuery({ queryKey: ["site-settings"], queryFn: getSiteSettings })
-  const serverIp = site?.serverIp ?? "survivaland.top"
+  const serverIp = site?.serverIp ?? "142.132.134.223:25620"
   const versionRange = site?.versionRange ?? "1.17.1–1.21.11"
   const currentVersion = site?.currentVersion ?? "1.21.11"
 

@@ -102,7 +102,7 @@ export function AdminSettings() {
                 value={form.siteDomain}
                 onChange={(e) => set("siteDomain", e.target.value)}
                 className={inputClass}
-                placeholder="survivaland.pp.ua"
+                placeholder="142.132.134.223:25620"
               />
               <p className="mt-1 text-[10px] text-[var(--color-text-dim)]">
                 Лише відображення / SEO. Прив’язка DNS: Vercel → Domains → survivaland.pp.ua
@@ -169,7 +169,7 @@ export function AdminSettings() {
                 value={form.serverIp}
                 onChange={(e) => set("serverIp", e.target.value)}
                 className={inputClass}
-                placeholder="survivaland.pp.ua"
+                placeholder="142.132.134.223:25620"
               />
             </Field>
             <Field label="Діапазон версій">

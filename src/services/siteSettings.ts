@@ -31,7 +31,7 @@ export const defaultSiteSettings: SiteSettings = {
   siteDescription:
     "Premium Minecraft survival server: building, economy, PvP and community.",
   logoUrl: "",
-  serverIp: "survivaland.pp.ua",
+  serverIp: "142.132.134.223:25620",
   versionRange: config.versionRange,
   currentVersion: config.currentVersion,
   discordInvite: config.discordInvite,

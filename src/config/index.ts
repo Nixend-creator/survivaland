@@ -3,7 +3,7 @@ export const config = {
   version: APP_VERSION,
   appName: "SurvivaLand",
   slogan: "Survival • Building • Community",
-  serverIp: "survivaland.pp.ua",
+  serverIp: "142.132.134.223:25620",
   versionRange: "1.17.1–1.21.11",
   currentVersion: "1.21.11",
   discordInvite: import.meta.env.VITE_DISCORD_INVITE_URL || "",
