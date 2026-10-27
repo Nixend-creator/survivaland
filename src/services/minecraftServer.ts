@@ -67,7 +67,7 @@ function mapStatusPayload(data: Record<string, unknown>): ServerStatus {
 
   // mcsrvstat: players: { online, max }, version: string | { name }
   const playersRaw = data.players as { online?: number; max?: number } | undefined
-  let version = config.currentVersion
+  let version: string = config.currentVersion
   if (typeof data.version === "string") version = data.version
   else if (data.version && typeof data.version === "object") {
     const v = data.version as { name?: string }

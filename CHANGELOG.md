@@ -5,6 +5,11 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/),
 версії — [Semantic Versioning](https://semver.org/lang/uk/).
 
+## [1.5.2] — 2026-10-27
+
+### Fixed
+- minecraftServer: `version` as `string` (TS2322 vs config literal)
+
 ## [1.5.1] — 2026-10-27
 
 ### Added
